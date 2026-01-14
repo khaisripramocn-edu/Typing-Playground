@@ -6,11 +6,15 @@
     <title>Typing Playground with AI 🌱</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="logo">🌳 Typing Playground <span class="ai-tag">with AI</span></div>
+        <div class="logo">
+        <img src="logo.png" alt="🌳" class="logo-img">
+        Typing Playground <span class="ai-tag">with AI</span>
+    </div>
         <div class="nav-links">
             <button class="nav-btn" onclick="location.reload()">🏠 หน้าแรก</button>
             <button class="nav-btn manual-btn" onclick="showManual()">📖 คู่มือ</button>
@@ -22,27 +26,21 @@
         <div class="card fade-in">
             <h1 class="hero-title">ฮีโร่นักพิมพ์! 🚀</h1>
             <p class="hero-subtitle">สะสมคะแนนเพื่อปลูกป่าใหญ่กันนะ</p>
+            <div class="tip-box"><p id="hero-tip">🌱 Tip: พิมพ์บ่อยๆ จะเก่งขึ้นนะ!</p></div>
+            <input type="text" id="student-name" placeholder="ใส่ชื่อฮีโร่ตรงนี้..." class="bubble-input">
             
-            <div id="tip-container" class="tip-box">
-                <p id="hero-tip">🌱 Tip: เตรียมตัวให้พร้อมนะฮีโร่!</p>
-            </div>
-
-            <input type="text" id="student-name" placeholder="ใส่ชื่อของหนูๆ ตรงนี้..." class="bubble-input">
-
             <div class="game-setup">
                 <div class="setup-card">
                     <h3>1. เลือกภาษา</h3>
                     <button class="btn btn-purple" id="btn-th" onclick="selectLang('th')">🇹🇭 ไทย</button>
                     <button class="btn btn-purple" id="btn-en" onclick="selectLang('en')">🇺🇸 English</button>
                 </div>
-
                 <div id="grade-area" class="setup-card fade-in" style="display:none;">
                     <h3>2. อยู่ชั้นไหนครับ?</h3>
                     <button class="btn btn-cyan" onclick="selectGrade('K')">🧸 อนุบาล</button>
                     <button class="btn btn-cyan" onclick="selectGrade('P12')">🎒 ป.1-2</button>
                     <button class="btn btn-cyan" onclick="selectGrade('P3')">🚀 ป.3</button>
                 </div>
-
                 <div id="diff-area" class="setup-card fade-in" style="display:none;">
                     <h3>3. เลือกความยาก</h3>
                     <button class="btn btn-green" onclick="startGame('easy')">🌟 ง่าย</button>
@@ -55,47 +53,55 @@
 
     <div id="game-page" class="page container" style="display:none;">
         <div class="card glass">
-            <div class="status-bar">
+            <div style="display:flex; justify-content: space-around; margin-bottom: 20px;">
                 <div id="p-info" class="badge">👤 -</div>
                 <div id="timer" class="badge timer">⏱️ 0s</div>
             </div>
-
             <div class="tree-visual">
-                <div id="tree-icon" class="tree-img">🌱</div>
+                <div id="tree-icon" class="tree-img" style="font-size: 80px;">🌱</div>
                 <div class="bar-bg"><div id="progressBar" class="bar-fill"></div></div>
             </div>
-
             <div id="wordDisplay" class="word-bubble">-</div>
-            <p class="guide-text">พิมพ์คำศัพท์แล้วกด <b>"Enter"</b> นะจ๊ะ</p>
             <input type="text" id="typeInput" placeholder="พิมพ์ตรงนี้..." class="bubble-input large-input" autocomplete="off">
-            
-            <br><button class="btn btn-gray" onclick="location.reload()">⬅️ เลิกเล่น</button>
+            <p>พิมพ์เสร็จแล้วกด <b>Enter</b> นะจ๊ะ</p>
         </div>
     </div>
 
     <div id="admin-page" class="page container" style="display:none;">
         <div class="card">
-            <h2 class="hero-title">⚙️ ระบบสำหรับคุณครู</h2>
+            <h2 class="hero-title">⚙️ ระบบคุณครู</h2>
+            
             <div class="admin-box">
-                <h3>➕ เพิ่มคำศัพท์ (คั่นด้วยคอมม่า , )</h3>
-                <div class="admin-row">
+                <h3>➕ เพิ่มคำศัพท์ใหม่</h3>
+                <input type="text" id="new-word" placeholder="มด, แมว, นก..." class="bubble-input full-width">
+                <div class="admin-row" style="margin-top:10px;">
                     <select id="add-lang" class="bubble-select"><option value="th">ไทย</option><option value="en">English</option></select>
                     <select id="add-grade" class="bubble-select"><option value="K">อนุบาล</option><option value="P12">ป.1-2</option><option value="P3">ป.3</option></select>
                     <select id="add-diff" class="bubble-select"><option value="easy">ง่าย</option><option value="medium">กลาง</option><option value="hard">ยาก</option></select>
                 </div>
-                <input type="text" id="new-word" placeholder="มด, แมว, นก..." class="bubble-input full-width">
-                <button class="btn btn-cyan full-width" onclick="addNewWords()">💾 บันทึกทั้งหมด</button>
+                <button class="btn btn-cyan full-width" onclick="addNewWords()" style="margin-top:10px;">💾 บันทึกคำศัพท์</button>
             </div>
-            <div class="admin-box">
+
+            <div class="admin-box" style="margin-top:20px;">
                 <h3>📊 สถิติฮีโร่</h3>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>ชื่อ</th><th>โหมด</th><th>เวลา</th></tr></thead>
+                        <thead><tr><th>ชื่อ</th><th>โหมด</th><th>เวลา</th><th>ผิด</th></tr></thead>
                         <tbody id="stats-body"></tbody>
                     </table>
                 </div>
                 <button class="btn btn-red full-width" onclick="clearStats()" style="margin-top:10px;">ล้างสถิติ</button>
             </div>
+
+            <div class="admin-box" style="margin-top:20px;">
+                <h3>📖 คลังคำศัพท์ปัจจุบัน</h3>
+                <div style="margin-bottom: 10px; display: flex; gap: 5px;">
+                    <select id="view-lang" class="bubble-select" onchange="renderWordBank()"><option value="th">ไทย</option><option value="en">English</option></select>
+                    <select id="view-grade" class="bubble-select" onchange="renderWordBank()"><option value="K">อนุบาล</option><option value="P12">ป.1-2</option><option value="P3">ป.3</option></select>
+                </div>
+                <div id="word-bank-display" style="background: white; padding: 15px; border-radius: 15px; text-align: left; max-height: 200px; overflow-y: auto; font-size: 0.9rem;"></div>
+            </div>
+            <button class="btn btn-gray full-width" onclick="location.reload()" style="margin-top:15px;">⬅️ กลับหน้าแรก</button>
         </div>
     </div>
 
@@ -104,13 +110,37 @@
             <span class="close-btn" onclick="closeManual()">&times;</span>
             <h2 class="hero-title">📖 คู่มือฮีโร่</h2>
             <div class="manual-steps">
-                <p>1. 👤 ใส่ชื่อของหนูๆ ก่อนนะ</p>
-                <p>2. 🗺️ เลือกภาษาและชั้นปีที่เรียน</p>
-                <p>3. ⌨️ พิมพ์คำศัพท์ที่เห็นในช่องสีฟ้า</p>
-                <p>4. 🚀 <b>กดปุ่ม Enter</b> เพื่อส่งพลังให้ต้นไม้</p>
-                <p>5. 🌳 พิมพ์ครบ 10 คำ ต้นไม้จะโตเต็มที่เลย!</p>
+                <p>1. 👤 ใส่ชื่อฮีโร่ของหนูๆ</p>
+                <p>2. 🗺️ เลือกภาษาและระดับชั้น</p>
+                <p>3. ⌨️ พิมพ์คำศัพท์แล้วกด <b>Enter</b></p>
+                <p>4. 🌳 พิมพ์ถูกครบ 10 คำ ต้นไม้จะโตเต็มที่!</p>
             </div>
             <button class="btn btn-cyan full-width" onclick="closeManual()">เริ่มเล่นเลย!</button>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal" style="display:none;">
+        <div class="modal-content fade-in" style="padding:0; overflow:hidden;">
+            <div id="capture-area" style="background: white; padding: 30px; text-align: center;">
+                <h1 style="font-size: 3rem; margin:0;">🎉</h1>
+                <h2 style="color: #10AC84; margin:10px 0;">เก่งมากฮีโร่!</h2>
+                <div id="res-tree" style="font-size: 80px;">🌲</div>
+                <div style="background: #f0fff4; padding: 15px; border-radius: 20px; border: 2px dashed #10AC84;">
+                    <p>ฮีโร่: <b id="res-name"></b></p>
+                    <div style="display: flex; justify-content: space-around; margin: 10px 0;">
+                        <span>⏱️ <b id="res-time"></b>s</span>
+                        <span>🏆 เกรด: <b id="res-grade"></b></span>
+                    </div>
+                    <div style="display: flex; justify-content: space-around; border-top: 1px solid #ddd; padding-top: 10px;">
+                        <span style="color: #2ecc71;">✅ ถูก: 10</span>
+                        <span style="color: #e74c3c;">❌ ผิด: <b id="res-wrong"></b></span>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 20px; display: grid; gap: 10px;">
+                <button class="btn btn-purple" onclick="shareResult()">📸 เซฟรูปอวดเพื่อน</button>
+                <button class="btn btn-gray" onclick="location.reload()">🎮 เล่นอีกครั้ง</button>
+            </div>
         </div>
     </div>
 
